@@ -1,22 +1,55 @@
 # ============================================================
 #                  CHRONOS-TECH TOOLKIT
 #                  Windows Support Toolkit
-#                  Version 2.0
+#                  Version 2.2
 # ============================================================
 
 # ------------------------------------------------------------
 # ELEVAR PARA ADMINISTRADOR
 # ------------------------------------------------------------
 
-if (-not ([Security.Principal.WindowsPrincipal] `
-    [Security.Principal.WindowsIdentity]::GetCurrent()
-).IsInRole(
-    [Security.Principal.WindowsBuiltInRole]::Administrator
-)) {
+$currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
 
-    Start-Process powershell.exe `
-        -Verb RunAs `
-        -ArgumentList "-ExecutionPolicy Bypass -File `"$PSCommandPath`""
+$principal = New-Object Security.Principal.WindowsPrincipal(
+    $currentIdentity
+)
+
+$isAdmin = $principal.IsInRole(
+    [Security.Principal.WindowsBuiltInRole]::Administrator
+)
+
+if (-not $isAdmin) {
+
+    if (-not $PSCommandPath) {
+
+        Write-Host ""
+        Write-Host "Execute este arquivo como um script .PS1." `
+            -ForegroundColor Red
+
+        Pause
+
+        exit
+    }
+
+    try {
+
+        Start-Process powershell.exe `
+            -Verb RunAs `
+            -ArgumentList @(
+                "-NoProfile"
+                "-ExecutionPolicy Bypass"
+                "-File `"$PSCommandPath`""
+            )
+
+    }
+    catch {
+
+        Write-Host ""
+        Write-Host "Não foi possível obter privilégios de administrador." `
+            -ForegroundColor Red
+
+        Pause
+    }
 
     exit
 }
@@ -25,11 +58,13 @@ if (-not ([Security.Principal.WindowsPrincipal] `
 # CONFIGURAÇÃO
 # ------------------------------------------------------------
 
+$ErrorActionPreference = "SilentlyContinue"
+
 Clear-Host
 
 $Host.UI.RawUI.WindowTitle = "Chronos-Tech Toolkit"
 
-$Version = "2.0"
+$Version = "2.2"
 
 # ------------------------------------------------------------
 # FUNÇÃO DE TEXTO ANIMADO
@@ -66,29 +101,55 @@ $logo = @'
 ██║     ██╔══██║██╔══██╗██║   ██║██║╚██╗██║██║   ██║╚════██║╚════╝██║   ██╔══╝  ██║     ██╔══██║
 ╚██████╗██║  ██║██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝███████║      ██║   ███████╗╚██████╗██║  ██║
  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝
- 
+
                C H R O N O S -- T E C H
-                    TOOLKIT v2.0
+                    TOOLKIT v2.2
 '@
 
 # ------------------------------------------------------------
-# PAUSE
+# PAUSA
 # ------------------------------------------------------------
 
 function Pause-CT {
 
     Write-Host ""
+
     Write-Host "Pressione qualquer tecla para continuar..." `
         -ForegroundColor DarkGray
 
-    $null = $Host.UI.RawUI.ReadKey(
-        "NoEcho,IncludeKeyDown"
-    )
+    try {
+
+        $null = $Host.UI.RawUI.ReadKey(
+            "NoEcho,IncludeKeyDown"
+        )
+
+    }
+    catch {
+
+        Read-Host | Out-Null
+    }
 }
 
 # ------------------------------------------------------------
-# TELA DE INICIALIZAÇÃO
+# CABEÇALHO
 # ------------------------------------------------------------
+
+function Show-Header {
+
+    Clear-Host
+
+    Write-Host $logo `
+        -ForegroundColor Cyan
+
+    Write-Host ""
+
+    Write-Host "============================================================" `
+        -ForegroundColor DarkCyan
+}
+
+# ============================================================
+# TELA DE INICIALIZAÇÃO
+# ============================================================
 
 Clear-Host
 
@@ -121,7 +182,7 @@ foreach ($msg in $mensagens) {
             -NoNewline `
             -ForegroundColor Yellow
 
-        Start-Sleep -Milliseconds 70
+        Start-Sleep -Milliseconds 50
     }
 
     Write-Host `
@@ -138,10 +199,13 @@ Write-Host ""
 for ($i = 0; $i -le 100; $i++) {
 
     $barSize = 50
+
     $filled = [math]::Floor($i / 2)
+
     $empty = $barSize - $filled
 
     $bars = "█" * $filled
+
     $spaces = " " * $empty
 
     Write-Host `
@@ -149,60 +213,10 @@ for ($i = 0; $i -le 100; $i++) {
         -NoNewline `
         -ForegroundColor Cyan
 
-    Start-Sleep -Milliseconds 15
+    Start-Sleep -Milliseconds 10
 }
 
-Start-Sleep -Milliseconds 400
-
-# ------------------------------------------------------------
-# MENU PRINCIPAL
-# ------------------------------------------------------------
-
-function Show-MainMenu {
-
-    Clear-Host
-
-    Write-Host $logo -ForegroundColor Cyan
-
-    Write-Host ""
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
-
-    Write-Host ""
-
-    Write-Host " [1] " -NoNewline -ForegroundColor Green
-    Write-Host "Liberar Espaço"
-
-    Write-Host " [2] " -NoNewline -ForegroundColor Green
-    Write-Host "Windows / Licenciamento"
-
-    Write-Host " [3] " -NoNewline -ForegroundColor Green
-    Write-Host "Diagnóstico de Rede"
-
-    Write-Host " [4] " -NoNewline -ForegroundColor Green
-    Write-Host "Informações do Sistema"
-
-    Write-Host " [5] " -NoNewline -ForegroundColor Green
-    Write-Host "Manutenção do Windows"
-
-    Write-Host " [6] " -NoNewline -ForegroundColor Green
-    Write-Host "Ferramentas do Windows"
-
-    Write-Host " [7] " -NoNewline -ForegroundColor Yellow
-    Write-Host "MaS Active"
-
-    Write-Host " [0] " -NoNewline -ForegroundColor Red
-    Write-Host "Sair"
-
-    Write-Host ""
-
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
-
-    Write-Host ""
-
-    return Read-Host "ChronosTech"
-}
+Start-Sleep -Milliseconds 300
 
 # ============================================================
 # LIBERAR ESPAÇO
@@ -210,13 +224,7 @@ function Show-MainMenu {
 
 function Liberar-Espaco {
 
-    Clear-Host
-
-    Write-Host $logo -ForegroundColor Cyan
-
-    Write-Host ""
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+    Show-Header
 
     Write-Host "                 LIBERAR ESPAÇO" `
         -ForegroundColor Green
@@ -226,29 +234,65 @@ function Liberar-Espaco {
 
     Write-Host ""
 
+    # --------------------------------------------------------
+    # TEMP
+    # --------------------------------------------------------
+
     Write-Host "[1/5] Limpando arquivos temporários..." `
         -ForegroundColor Yellow
 
-    Remove-Item `
-        "$env:TEMP\*" `
-        -Recurse `
-        -Force `
-        -ErrorAction SilentlyContinue
+    try {
 
-    Remove-Item `
-        "C:\Windows\Temp\*" `
-        -Recurse `
-        -Force `
-        -ErrorAction SilentlyContinue
+        Remove-Item `
+            "$env:TEMP\*" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
 
+        Remove-Item `
+            "$env:WINDIR\Temp\*" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
+
+        Write-Host "[OK] Arquivos temporários processados." `
+            -ForegroundColor Green
+    }
+    catch {
+
+        Write-Host "[!] Algumas pastas não puderam ser limpas." `
+            -ForegroundColor Yellow
+    }
+
+    Write-Host ""
+
+    # --------------------------------------------------------
+    # LIXEIRA
+    # --------------------------------------------------------
 
     Write-Host "[2/5] Esvaziando a Lixeira..." `
         -ForegroundColor Yellow
 
-    Clear-RecycleBin `
-        -Force `
-        -ErrorAction SilentlyContinue
+    try {
 
+        Clear-RecycleBin `
+            -Force `
+            -ErrorAction SilentlyContinue
+
+        Write-Host "[OK] Lixeira processada." `
+            -ForegroundColor Green
+    }
+    catch {
+
+        Write-Host "[!] Não foi possível limpar a Lixeira." `
+            -ForegroundColor Yellow
+    }
+
+    Write-Host ""
+
+    # --------------------------------------------------------
+    # CACHE DE MINIATURAS
+    # --------------------------------------------------------
 
     Write-Host "[3/5] Limpando cache de miniaturas..." `
         -ForegroundColor Yellow
@@ -258,6 +302,14 @@ function Liberar-Espaco {
         -Force `
         -ErrorAction SilentlyContinue
 
+    Write-Host "[OK] Cache processado." `
+        -ForegroundColor Green
+
+    Write-Host ""
+
+    # --------------------------------------------------------
+    # WINDOWS UPDATE
+    # --------------------------------------------------------
 
     Write-Host "[4/5] Limpando cache do Windows Update..." `
         -ForegroundColor Yellow
@@ -268,7 +320,7 @@ function Liberar-Espaco {
         -ErrorAction SilentlyContinue
 
     Remove-Item `
-        "C:\Windows\SoftwareDistribution\Download\*" `
+        "$env:WINDIR\SoftwareDistribution\Download\*" `
         -Recurse `
         -Force `
         -ErrorAction SilentlyContinue
@@ -277,14 +329,25 @@ function Liberar-Espaco {
         wuauserv `
         -ErrorAction SilentlyContinue
 
+    Write-Host "[OK] Cache do Windows Update processado." `
+        -ForegroundColor Green
+
+    Write-Host ""
+
+    # --------------------------------------------------------
+    # DISM
+    # --------------------------------------------------------
 
     Write-Host "[5/5] Otimizando componentes do Windows..." `
         -ForegroundColor Yellow
 
-    DISM /Online /Cleanup-Image /StartComponentCleanup
-
+    DISM.exe `
+        /Online `
+        /Cleanup-Image `
+        /StartComponentCleanup
 
     Write-Host ""
+
     Write-Host "============================================================" `
         -ForegroundColor DarkCyan
 
@@ -303,100 +366,123 @@ function Liberar-Espaco {
 
 function Windows-Licenciamento {
 
-    Clear-Host
+    while ($true) {
 
-    Write-Host $logo -ForegroundColor Cyan
+        Show-Header
 
-    Write-Host ""
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+        Write-Host "              WINDOWS / LICENCIAMENTO" `
+            -ForegroundColor Green
 
-    Write-Host "              WINDOWS / LICENCIAMENTO" `
-        -ForegroundColor Green
+        Write-Host "============================================================" `
+            -ForegroundColor DarkCyan
 
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+        Write-Host ""
 
-    Write-Host ""
+        Write-Host "[1] Informações da licença"
+        Write-Host "[2] Versão do Windows"
+        Write-Host "[3] Ver chave OEM instalada"
+        Write-Host "[0] Voltar"
 
-    Write-Host "[1] Informações da licença"
-    Write-Host "[2] Versão do Windows"
-    Write-Host "[3] Ver chave instalada"
-    Write-Host "[0] Voltar"
+        Write-Host ""
 
-    Write-Host ""
+        $opcao = Read-Host "ChronosTech\Windows"
 
-    $opcao = Read-Host "ChronosTech\Windows"
+        switch ($opcao) {
 
-    switch ($opcao) {
+            "1" {
 
-        "1" {
+                Show-Header
 
-            Clear-Host
+                Write-Host "=== LICENÇA DO WINDOWS ===" `
+                    -ForegroundColor Cyan
 
-            Write-Host "=== LICENÇA DO WINDOWS ===" `
-                -ForegroundColor Cyan
+                Write-Host ""
 
-            Write-Host ""
+                cscript.exe `
+                    "$env:SystemRoot\System32\slmgr.vbs" `
+                    /dli
 
-            cscript.exe `
-                "$env:SystemRoot\System32\slmgr.vbs" `
-                /dli
-
-            Pause-CT
-        }
-
-        "2" {
-
-            Clear-Host
-
-            Write-Host "=== VERSÃO DO WINDOWS ===" `
-                -ForegroundColor Cyan
-
-            Write-Host ""
-
-            Get-ComputerInfo |
-                Select-Object `
-                    WindowsProductName,
-                    WindowsVersion,
-                    OsBuildNumber,
-                    OsArchitecture
-
-            Pause-CT
-        }
-
-        "3" {
-
-            Clear-Host
-
-            Write-Host "=== CHAVE INSTALADA ===" `
-                -ForegroundColor Cyan
-
-            Write-Host ""
-
-            $key = Get-CimInstance `
-                -ClassName SoftwareLicensingService |
-                Select-Object -ExpandProperty OA3OriginalProductKey
-
-            if ($key) {
-
-                Write-Host "Chave OEM:" `
-                    -ForegroundColor Green
-
-                Write-Host $key
-
-            } else {
-
-                Write-Host `
-                    "Nenhuma chave OEM encontrada." `
-                    -ForegroundColor Yellow
+                Pause-CT
             }
 
-            Pause-CT
-        }
+            "2" {
 
-        "0" {
-            return
+                Show-Header
+
+                Write-Host "=== VERSÃO DO WINDOWS ===" `
+                    -ForegroundColor Cyan
+
+                Write-Host ""
+
+                $os = Get-CimInstance `
+                    Win32_OperatingSystem
+
+                Write-Host "Sistema     : " -NoNewline
+
+                Write-Host $os.Caption `
+                    -ForegroundColor Green
+
+                Write-Host "Versão      : " -NoNewline
+
+                Write-Host $os.Version
+
+                Write-Host "Build       : " -NoNewline
+
+                Write-Host $os.BuildNumber
+
+                Write-Host "Arquitetura : " -NoNewline
+
+                Write-Host $os.OSArchitecture
+
+                Pause-CT
+            }
+
+            "3" {
+
+                Show-Header
+
+                Write-Host "=== CHAVE OEM ===" `
+                    -ForegroundColor Cyan
+
+                Write-Host ""
+
+                $key = Get-CimInstance `
+                    -ClassName SoftwareLicensingService |
+                    Select-Object -ExpandProperty OA3OriginalProductKey
+
+                if ($key) {
+
+                    Write-Host "Chave OEM encontrada:" `
+                        -ForegroundColor Green
+
+                    Write-Host ""
+
+                    Write-Host $key `
+                        -ForegroundColor Cyan
+                }
+                else {
+
+                    Write-Host `
+                        "Nenhuma chave OEM encontrada no firmware." `
+                        -ForegroundColor Yellow
+                }
+
+                Pause-CT
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+
+                Write-Host ""
+
+                Write-Host "Opção inválida!" `
+                    -ForegroundColor Red
+
+                Start-Sleep -Seconds 1
+            }
         }
     }
 }
@@ -407,91 +493,127 @@ function Windows-Licenciamento {
 
 function Diagnostico-Rede {
 
-    Clear-Host
+    while ($true) {
 
-    Write-Host $logo -ForegroundColor Cyan
+        Show-Header
 
-    Write-Host ""
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+        Write-Host "                 DIAGNÓSTICO DE REDE" `
+            -ForegroundColor Green
 
-    Write-Host "                 DIAGNÓSTICO DE REDE" `
-        -ForegroundColor Green
+        Write-Host "============================================================" `
+            -ForegroundColor DarkCyan
 
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+        Write-Host ""
 
-    Write-Host ""
+        Write-Host "[1] Informações de IP"
+        Write-Host "[2] Testar Internet"
+        Write-Host "[3] Testar DNS"
+        Write-Host "[4] Limpar DNS"
+        Write-Host "[5] Adaptadores"
+        Write-Host "[0] Voltar"
 
-    Write-Host "[1] Informações de IP"
-    Write-Host "[2] Testar Internet"
-    Write-Host "[3] Testar DNS"
-    Write-Host "[4] Limpar DNS"
-    Write-Host "[5] Adaptadores"
-    Write-Host "[0] Voltar"
+        Write-Host ""
 
-    Write-Host ""
+        $opcao = Read-Host "ChronosTech\Rede"
 
-    $opcao = Read-Host "ChronosTech\Rede"
+        switch ($opcao) {
 
-    switch ($opcao) {
+            "1" {
 
-        "1" {
+                Show-Header
 
-            Clear-Host
-            ipconfig /all
-            Pause-CT
-        }
+                Write-Host "=== CONFIGURAÇÃO DE REDE ===" `
+                    -ForegroundColor Cyan
 
-        "2" {
+                Write-Host ""
 
-            Clear-Host
+                ipconfig /all
 
-            Write-Host "Testando conectividade..." `
-                -ForegroundColor Cyan
+                Pause-CT
+            }
 
-            Test-Connection `
-                8.8.8.8 `
-                -Count 4
+            "2" {
 
-            Pause-CT
-        }
+                Show-Header
 
-        "3" {
+                Write-Host "=== TESTE DE INTERNET ===" `
+                    -ForegroundColor Cyan
 
-            Clear-Host
+                Write-Host ""
 
-            Resolve-DnsName google.com
+                Write-Host "Testando conectividade com 8.8.8.8..." `
+                    -ForegroundColor Yellow
 
-            Pause-CT
-        }
+                Write-Host ""
 
-        "4" {
+                Test-Connection `
+                    -ComputerName 8.8.8.8 `
+                    -Count 4
 
-            Clear-Host
+                Pause-CT
+            }
 
-            ipconfig /flushdns
+            "3" {
 
-            Pause-CT
-        }
+                Show-Header
 
-        "5" {
+                Write-Host "=== TESTE DE DNS ===" `
+                    -ForegroundColor Cyan
 
-            Clear-Host
+                Write-Host ""
 
-            Get-NetAdapter |
-                Format-Table `
-                    Name,
-                    Status,
-                    LinkSpeed,
-                    MacAddress `
-                    -AutoSize
+                Resolve-DnsName google.com
 
-            Pause-CT
-        }
+                Pause-CT
+            }
 
-        "0" {
-            return
+            "4" {
+
+                Show-Header
+
+                Write-Host "=== LIMPEZA DE DNS ===" `
+                    -ForegroundColor Cyan
+
+                Write-Host ""
+
+                ipconfig /flushdns
+
+                Pause-CT
+            }
+
+            "5" {
+
+                Show-Header
+
+                Write-Host "=== ADAPTADORES DE REDE ===" `
+                    -ForegroundColor Cyan
+
+                Write-Host ""
+
+                Get-NetAdapter |
+                    Format-Table `
+                        Name,
+                        Status,
+                        LinkSpeed,
+                        MacAddress `
+                        -AutoSize
+
+                Pause-CT
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+
+                Write-Host ""
+
+                Write-Host "Opção inválida!" `
+                    -ForegroundColor Red
+
+                Start-Sleep -Seconds 1
+            }
         }
     }
 }
@@ -502,13 +624,7 @@ function Diagnostico-Rede {
 
 function Informacoes-Sistema {
 
-    Clear-Host
-
-    Write-Host $logo -ForegroundColor Cyan
-
-    Write-Host ""
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+    Show-Header
 
     Write-Host "                INFORMAÇÕES DO SISTEMA" `
         -ForegroundColor Green
@@ -518,134 +634,420 @@ function Informacoes-Sistema {
 
     Write-Host ""
 
-    $computer = Get-CimInstance Win32_ComputerSystem
-    $os = Get-CimInstance Win32_OperatingSystem
-    $cpu = Get-CimInstance Win32_Processor |
+    $computer = Get-CimInstance `
+        Win32_ComputerSystem
+
+    $os = Get-CimInstance `
+        Win32_OperatingSystem
+
+    $cpu = Get-CimInstance `
+        Win32_Processor |
         Select-Object -First 1
 
     Write-Host "Computador : " -NoNewline
-    Write-Host $computer.Name -ForegroundColor Cyan
+
+    Write-Host $computer.Name `
+        -ForegroundColor Cyan
 
     Write-Host "Fabricante : " -NoNewline
+
     Write-Host $computer.Manufacturer
 
     Write-Host "Modelo     : " -NoNewline
+
     Write-Host $computer.Model
 
     Write-Host "CPU        : " -NoNewline
+
     Write-Host $cpu.Name
 
+    Write-Host "Núcleos    : " -NoNewline
+
+    Write-Host $cpu.NumberOfCores
+
     Write-Host "RAM        : " -NoNewline
-    Write-Host "$([math]::Round($computer.TotalPhysicalMemory / 1GB,2)) GB"
+
+    Write-Host "$([math]::Round($computer.TotalPhysicalMemory / 1GB, 2)) GB"
 
     Write-Host "Windows    : " -NoNewline
+
     Write-Host $os.Caption
 
     Write-Host "Versão     : " -NoNewline
+
     Write-Host $os.Version
 
     Write-Host "Build      : " -NoNewline
+
     Write-Host $os.BuildNumber
 
     Write-Host "Arquitetura: " -NoNewline
+
     Write-Host $os.OSArchitecture
+
+    Write-Host ""
 
     Pause-CT
 }
 
 # ============================================================
-# MANUTENÇÃO
+# MANUTENÇÃO DO WINDOWS
 # ============================================================
 
 function Manutencao-Windows {
 
-    Clear-Host
+    while ($true) {
 
-    Write-Host $logo -ForegroundColor Cyan
+        Show-Header
 
-    Write-Host ""
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+        Write-Host "                 MANUTENÇÃO WINDOWS" `
+            -ForegroundColor Green
 
-    Write-Host "                 MANUTENÇÃO WINDOWS" `
-        -ForegroundColor Green
+        Write-Host "============================================================" `
+            -ForegroundColor DarkCyan
 
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+        Write-Host ""
 
-    Write-Host ""
+        Write-Host "[1] SFC /SCANNOW"
+        Write-Host "[2] DISM RestoreHealth"
+        Write-Host "[3] Verificar disco"
+        Write-Host "[4] Limpeza de Disco"
+        Write-Host "[0] Voltar"
 
-    Write-Host "[1] SFC /SCANNOW"
-    Write-Host "[2] DISM RestoreHealth"
-    Write-Host "[3] Verificar disco"
-    Write-Host "[4] Limpeza de Disco"
-    Write-Host "[0] Voltar"
+        Write-Host ""
 
-    Write-Host ""
+        $opcao = Read-Host "ChronosTech\Manutencao"
 
-    $opcao = Read-Host "ChronosTech\Manutencao"
+        switch ($opcao) {
 
-    switch ($opcao) {
+            "1" {
 
-        "1" {
+                Show-Header
 
-            Clear-Host
+                Write-Host "=== SFC /SCANNOW ===" `
+                    -ForegroundColor Cyan
 
-            Write-Host "Executando SFC..." `
-                -ForegroundColor Cyan
+                Write-Host ""
 
-            sfc /scannow
+                sfc.exe /scannow
 
-            Pause-CT
-        }
+                Pause-CT
+            }
 
-        "2" {
+            "2" {
 
-            Clear-Host
+                Show-Header
 
-            Write-Host "Executando DISM..." `
-                -ForegroundColor Cyan
+                Write-Host "=== DISM RESTOREHEALTH ===" `
+                    -ForegroundColor Cyan
 
-            DISM /Online /Cleanup-Image /RestoreHealth
+                Write-Host ""
 
-            Pause-CT
-        }
+                DISM.exe `
+                    /Online `
+                    /Cleanup-Image `
+                    /RestoreHealth
 
-        "3" {
+                Pause-CT
+            }
 
-            Clear-Host
+            "3" {
 
-            chkdsk C: /scan
+                Show-Header
 
-            Pause-CT
-        }
+                Write-Host "=== VERIFICAÇÃO DO DISCO ===" `
+                    -ForegroundColor Cyan
 
-        "4" {
+                Write-Host ""
 
-            Start-Process cleanmgr
-        }
+                chkdsk.exe C: /scan
 
-        "0" {
-            return
+                Pause-CT
+            }
+
+            "4" {
+
+                Start-Process `
+                    cleanmgr.exe
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+
+                Write-Host ""
+
+                Write-Host "Opção inválida!" `
+                    -ForegroundColor Red
+
+                Start-Sleep -Seconds 1
+            }
         }
     }
 }
 
 # ============================================================
-# FERRAMENTAS WINDOWS
+# FERRAMENTAS DO WINDOWS
 # ============================================================
 
 function Ferramentas-Windows {
 
-    Clear-Host
+    while ($true) {
 
-    Write-Host $logo -ForegroundColor Cyan
+        Show-Header
 
-    Write-Host ""
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
+        Write-Host "                  FERRAMENTAS WINDOWS" `
+            -ForegroundColor Green
 
-    Write-Host "                  FERRAMENTAS WINDOWS" `
+        Write-Host "============================================================" `
+            -ForegroundColor DarkCyan
+
+        Write-Host ""
+
+        Write-Host "[1] CMD"
+        Write-Host "[2] PowerShell"
+        Write-Host "[3] Gerenciador de Tarefas"
+        Write-Host "[4] Editor do Registro"
+        Write-Host "[5] Visualizador de Eventos"
+        Write-Host "[6] Gerenciador de Dispositivos"
+        Write-Host "[7] Gerenciamento de Disco"
+        Write-Host "[8] Serviços"
+        Write-Host "[9] Informações do Sistema"
+        Write-Host "[10] Painel de Controle"
+        Write-Host "[11] Gerenciador de Computador"
+        Write-Host "[12] Firewall do Windows"
+        Write-Host "[0] Voltar"
+
+        Write-Host ""
+
+        $opcao = Read-Host "ChronosTech\Ferramentas"
+
+        switch ($opcao) {
+
+            "1" {
+                Start-Process cmd.exe
+            }
+
+            "2" {
+                Start-Process powershell.exe
+            }
+
+            "3" {
+                Start-Process taskmgr.exe
+            }
+
+            "4" {
+                Start-Process regedit.exe
+            }
+
+            "5" {
+                Start-Process eventvwr.msc
+            }
+
+            "6" {
+                Start-Process devmgmt.msc
+            }
+
+            "7" {
+                Start-Process diskmgmt.msc
+            }
+
+            "8" {
+                Start-Process services.msc
+            }
+
+            "9" {
+                Start-Process msinfo32.exe
+            }
+
+            "10" {
+                Start-Process control.exe
+            }
+
+            "11" {
+                Start-Process compmgmt.msc
+            }
+
+            "12" {
+                Start-Process wf.msc
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+
+                Write-Host ""
+
+                Write-Host "Opção inválida!" `
+                    -ForegroundColor Red
+
+                Start-Sleep -Seconds 1
+            }
+        }
+    }
+}
+
+# ============================================================
+# MAS ACTIVE
+# ============================================================
+
+function MAS-Active {
+
+    while ($true) {
+
+        Show-Header
+
+        Write-Host "                       MAS ACTIVE" `
+            -ForegroundColor Yellow
+
+        Write-Host "============================================================" `
+            -ForegroundColor DarkCyan
+
+        Write-Host ""
+
+        Write-Host "Microsoft Activation Scripts" `
+            -ForegroundColor Cyan
+
+        Write-Host ""
+
+        Write-Host "Ferramenta externa para gerenciamento de ativação." `
+            -ForegroundColor Gray
+
+        Write-Host ""
+
+        Write-Host "[1] Abrir site oficial"
+        Write-Host "[2] Exibir comando oficial"
+        Write-Host "[3] Ver status da licença"
+        Write-Host "[0] Voltar"
+
+        Write-Host ""
+
+        $opcao = Read-Host "ChronosTech\MaS"
+
+        switch ($opcao) {
+
+            # ------------------------------------------------
+            # ABRIR SITE
+            # ------------------------------------------------
+
+            "1" {
+
+                Write-Host ""
+
+                Write-Host "Abrindo site oficial..." `
+                    -ForegroundColor Yellow
+
+                Start-Process `
+                    "https://get.activated.win"
+
+                Start-Sleep -Seconds 2
+            }
+
+            # ------------------------------------------------
+            # EXIBIR COMANDO
+            # ------------------------------------------------
+
+            "2" {
+
+                Show-Header
+
+                Write-Host "                  COMANDO DO MAS" `
+                    -ForegroundColor Yellow
+
+                Write-Host "============================================================" `
+                    -ForegroundColor DarkCyan
+
+                Write-Host ""
+
+                Write-Host "Fonte:" `
+                    -ForegroundColor Gray
+
+                Write-Host "https://get.activated.win" `
+                    -ForegroundColor Cyan
+
+                Write-Host ""
+
+                Write-Host "Comando utilizado pelo método PowerShell:" `
+                    -ForegroundColor Gray
+
+                Write-Host ""
+
+                Write-Host "irm https://get.activated.win | iex" `
+                    -ForegroundColor Green
+
+                Write-Host ""
+
+                Write-Host "ATENÇÃO:" `
+                    -ForegroundColor Red
+
+                Write-Host "Esse comando baixa e executa código remoto." `
+                    -ForegroundColor Yellow
+
+                Write-Host ""
+                Write-Host "A execução foi deixada manual para evitar" `
+                    -ForegroundColor Gray
+
+                Write-Host "execução remota automática pelo Toolkit." `
+                    -ForegroundColor Gray
+
+                Pause-CT
+            }
+
+            # ------------------------------------------------
+            # STATUS DA LICENÇA
+            # ------------------------------------------------
+
+            "3" {
+
+                Show-Header
+
+                Write-Host "                 STATUS DA LICENÇA" `
+                    -ForegroundColor Cyan
+
+                Write-Host "============================================================" `
+                    -ForegroundColor DarkCyan
+
+                Write-Host ""
+
+                cscript.exe `
+                    "$env:SystemRoot\System32\slmgr.vbs" `
+                    /xpr
+
+                Write-Host ""
+
+                Pause-CT
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+
+                Write-Host ""
+
+                Write-Host "Opção inválida!" `
+                    -ForegroundColor Red
+
+                Start-Sleep -Seconds 1
+            }
+        }
+    }
+}
+
+# ============================================================
+# SOBRE O CHRONOS-TECH
+# ============================================================
+
+function Sobre-Chronos {
+
+    Show-Header
+
+    Write-Host "                 SOBRE O CHRONOS-TECH" `
         -ForegroundColor Green
 
     Write-Host "============================================================" `
@@ -653,67 +1055,116 @@ function Ferramentas-Windows {
 
     Write-Host ""
 
-    Write-Host "[1] CMD"
-    Write-Host "[2] PowerShell"
-    Write-Host "[3] Gerenciador de Tarefas"
-    Write-Host "[4] Editor do Registro"
-    Write-Host "[5] Visualizador de Eventos"
-    Write-Host "[6] Gerenciador de Dispositivos"
-    Write-Host "[7] Gerenciamento de Disco"
-    Write-Host "[8] Serviços"
-    Write-Host "[9] Informações do Sistema"
-    Write-Host "[0] Voltar"
+    Write-Host "Chronos-Tech Toolkit" `
+        -ForegroundColor Cyan
+
+    Write-Host "Windows Support Toolkit"
 
     Write-Host ""
 
-    $opcao = Read-Host "ChronosTech\Ferramentas"
+    Write-Host "Versão: $Version" `
+        -ForegroundColor Yellow
 
-    switch ($opcao) {
+    Write-Host ""
 
-        "1" {
-            Start-Process cmd
-        }
+    Write-Host "Ferramentas desenvolvidas para auxiliar" `
+        -ForegroundColor Gray
 
-        "2" {
-            Start-Process powershell
-        }
+    Write-Host "na manutenção, diagnóstico e suporte técnico"
+    Write-Host "de computadores Windows."
 
-        "3" {
-            Start-Process taskmgr
-        }
+    Write-Host ""
 
-        "4" {
-            Start-Process regedit
-        }
+    Write-Host "============================================================" `
+        -ForegroundColor DarkCyan
 
-        "5" {
-            Start-Process eventvwr
-        }
-
-        "6" {
-            Start-Process devmgmt.msc
-        }
-
-        "7" {
-            Start-Process diskmgmt.msc
-        }
-
-        "8" {
-            Start-Process services.msc
-        }
-
-        "9" {
-            Start-Process msinfo32
-        }
-
-        "0" {
-            return
-        }
-    }
+    Pause-CT
 }
 
 # ============================================================
 # MENU PRINCIPAL
+# ============================================================
+
+function Show-MainMenu {
+
+    Clear-Host
+
+    Write-Host $logo `
+        -ForegroundColor Cyan
+
+    Write-Host ""
+
+    Write-Host "============================================================" `
+        -ForegroundColor DarkCyan
+
+    Write-Host ""
+
+    Write-Host " [1] " `
+        -NoNewline `
+        -ForegroundColor Green
+
+    Write-Host "Liberar Espaço"
+
+    Write-Host " [2] " `
+        -NoNewline `
+        -ForegroundColor Green
+
+    Write-Host "Windows / Licenciamento"
+
+    Write-Host " [3] " `
+        -NoNewline `
+        -ForegroundColor Green
+
+    Write-Host "Diagnóstico de Rede"
+
+    Write-Host " [4] " `
+        -NoNewline `
+        -ForegroundColor Green
+
+    Write-Host "Informações do Sistema"
+
+    Write-Host " [5] " `
+        -NoNewline `
+        -ForegroundColor Green
+
+    Write-Host "Manutenção do Windows"
+
+    Write-Host " [6] " `
+        -NoNewline `
+        -ForegroundColor Green
+
+    Write-Host "Ferramentas do Windows"
+
+    Write-Host " [7] " `
+        -NoNewline `
+        -ForegroundColor Yellow
+
+    Write-Host "MaS Active"
+
+    Write-Host " [8] " `
+        -NoNewline `
+        -ForegroundColor Cyan
+
+    Write-Host "Sobre o Chronos-Tech"
+
+    Write-Host " [0] " `
+        -NoNewline `
+        -ForegroundColor Red
+
+    Write-Host "Sair"
+
+    Write-Host ""
+
+    Write-Host "============================================================" `
+        -ForegroundColor DarkCyan
+
+    Write-Host ""
+
+    return Read-Host "ChronosTech"
+}
+
+# ============================================================
+# EXECUÇÃO PRINCIPAL
 # ============================================================
 
 while ($true) {
@@ -747,45 +1198,36 @@ while ($true) {
         }
 
         "7" {
+            MAS-Active
+        }
 
-    Clear-Host
+        "8" {
+            Sobre-Chronos
+        }
 
-    Write-Host $logo -ForegroundColor Cyan
-    Write-Host ""
-
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
-
-    Write-Host "                       MaS Active" `
-        -ForegroundColor Green
-
-    Write-Host "============================================================" `
-        -ForegroundColor DarkCyan
-
-    Write-Host ""
-
-    Write-Host "Abrindo o site oficial do MAS..." `
-        -ForegroundColor Yellow
-
-    Start-Process "https://get.activated.win"
-
-    Pause-CT
-}
         "0" {
 
             Clear-Host
 
             Write-Host ""
+
             Write-Host "============================================================" `
                 -ForegroundColor Cyan
 
             Write-Host "       Obrigado por utilizar o Chronos-Tech Toolkit!" `
                 -ForegroundColor Cyan
 
+            Write-Host ""
+
+            Write-Host "                    Até a próxima!" `
+                -ForegroundColor Green
+
             Write-Host "============================================================" `
                 -ForegroundColor Cyan
 
             Write-Host ""
+
+            Start-Sleep -Seconds 2
 
             exit
         }
@@ -793,10 +1235,11 @@ while ($true) {
         default {
 
             Write-Host ""
+
             Write-Host "Opção inválida!" `
                 -ForegroundColor Red
 
-            Start-Sleep -Seconds 2
+            Start-Sleep -Seconds 1
         }
     }
 }
