@@ -67,7 +67,7 @@ $Host.UI.RawUI.WindowTitle = "Chronos-Tech Toolkit"
 $Version = "2.2"
 
 # ------------------------------------------------------------
-# FUNÇÃO DE TEXTO ANIMADO
+# TEXTO ANIMADO
 # ------------------------------------------------------------
 
 function Type-Text {
@@ -95,15 +95,15 @@ function Type-Text {
 # ------------------------------------------------------------
 
 $logo = @'
- ██████╗██╗  ██╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ███████╗   ████████╗███████╗ ██████╗██╗  ██╗
+██████╗██╗  ██╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ███████╗   ████████╗███████╗ ██████╗██╗  ██╗
 ██╔════╝██║  ██║██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██╔════╝   ╚══██╔══╝██╔════╝██╔════╝██║  ██║
 ██║     ███████║██████╔╝██║   ██║██╔██╗ ██║██║   ██║███████╗█████╗██║   █████╗  ██║     ███████║
 ██║     ██╔══██║██╔══██╗██║   ██║██║╚██╗██║██║   ██║╚════██║╚════╝██║   ██╔══╝  ██║     ██╔══██║
 ╚██████╗██║  ██║██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝███████║      ██║   ███████╗╚██████╗██║  ██║
  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝
 
-               C H R O N O S -- T E C H
-                    TOOLKIT v2.2
+              C H R O N O S -- T E C H
+                   TOOLKIT v2.2
 '@
 
 # ------------------------------------------------------------
@@ -418,20 +418,16 @@ function Windows-Licenciamento {
                     Win32_OperatingSystem
 
                 Write-Host "Sistema     : " -NoNewline
-
                 Write-Host $os.Caption `
                     -ForegroundColor Green
 
                 Write-Host "Versão      : " -NoNewline
-
                 Write-Host $os.Version
 
                 Write-Host "Build       : " -NoNewline
-
                 Write-Host $os.BuildNumber
 
                 Write-Host "Arquitetura : " -NoNewline
-
                 Write-Host $os.OSArchitecture
 
                 Pause-CT
@@ -645,44 +641,34 @@ function Informacoes-Sistema {
         Select-Object -First 1
 
     Write-Host "Computador : " -NoNewline
-
     Write-Host $computer.Name `
         -ForegroundColor Cyan
 
     Write-Host "Fabricante : " -NoNewline
-
     Write-Host $computer.Manufacturer
 
     Write-Host "Modelo     : " -NoNewline
-
     Write-Host $computer.Model
 
     Write-Host "CPU        : " -NoNewline
-
     Write-Host $cpu.Name
 
     Write-Host "Núcleos    : " -NoNewline
-
     Write-Host $cpu.NumberOfCores
 
     Write-Host "RAM        : " -NoNewline
-
     Write-Host "$([math]::Round($computer.TotalPhysicalMemory / 1GB, 2)) GB"
 
     Write-Host "Windows    : " -NoNewline
-
     Write-Host $os.Caption
 
     Write-Host "Versão     : " -NoNewline
-
     Write-Host $os.Version
 
     Write-Host "Build      : " -NoNewline
-
     Write-Host $os.BuildNumber
 
     Write-Host "Arquitetura: " -NoNewline
-
     Write-Host $os.OSArchitecture
 
     Write-Host ""
@@ -892,7 +878,7 @@ function Ferramentas-Windows {
 }
 
 # ============================================================
-# MAS ACTIVE
+# MAS
 # ============================================================
 
 function MAS-Active {
@@ -930,10 +916,6 @@ function MAS-Active {
 
         switch ($opcao) {
 
-            # ------------------------------------------------
-            # ABRIR SITE
-            # ------------------------------------------------
-
             "1" {
 
                 Write-Host ""
@@ -942,14 +924,10 @@ function MAS-Active {
                     -ForegroundColor Yellow
 
                 Start-Process `
-                    "https://get.activated.win"
+                    "https://github.com/massgravel/Microsoft-Activation-Scripts"
 
                 Start-Sleep -Seconds 2
             }
-
-            # ------------------------------------------------
-            # EXIBIR COMANDO
-            # ------------------------------------------------
 
             "2" {
 
@@ -963,43 +941,32 @@ function MAS-Active {
 
                 Write-Host ""
 
-                Write-Host "Fonte:" `
+                Write-Host "Repositório oficial:" `
                     -ForegroundColor Gray
 
-                Write-Host "https://get.activated.win" `
+                Write-Host "https://github.com/massgravel/Microsoft-Activation-Scripts" `
                     -ForegroundColor Cyan
 
                 Write-Host ""
 
-                Write-Host "Comando utilizado pelo método PowerShell:" `
+                Write-Host "O MAS possui métodos oficiais documentados" `
                     -ForegroundColor Gray
 
-                Write-Host ""
-
-                Write-Host "irm https://get.activated.win | iex" `
-                    -ForegroundColor Green
+                Write-Host "no próprio repositório do projeto." `
+                    -ForegroundColor Gray
 
                 Write-Host ""
 
                 Write-Host "ATENÇÃO:" `
                     -ForegroundColor Red
 
-                Write-Host "Esse comando baixa e executa código remoto." `
+                Write-Host "Evite executar comandos remotos de fontes desconhecidas." `
                     -ForegroundColor Yellow
 
                 Write-Host ""
-                Write-Host "A execução foi deixada manual para evitar" `
-                    -ForegroundColor Gray
-
-                Write-Host "execução remota automática pelo Toolkit." `
-                    -ForegroundColor Gray
 
                 Pause-CT
             }
-
-            # ------------------------------------------------
-            # STATUS DA LICENÇA
-            # ------------------------------------------------
 
             "3" {
 
@@ -1071,6 +1038,7 @@ function Sobre-Chronos {
         -ForegroundColor Gray
 
     Write-Host "na manutenção, diagnóstico e suporte técnico"
+
     Write-Host "de computadores Windows."
 
     Write-Host ""
