@@ -1,5 +1,5 @@
 # ============================================================
-#                  CHRONOSTECH TOOLKIT
+#                  CHRONOS-TECH TOOLKIT
 #                  Windows Support Toolkit
 #                  Version 2.0
 # ============================================================
@@ -27,7 +27,7 @@ if (-not ([Security.Principal.WindowsPrincipal] `
 
 Clear-Host
 
-$Host.UI.RawUI.WindowTitle = "ChronosTech Toolkit"
+$Host.UI.RawUI.WindowTitle = "Chronos-Tech Toolkit"
 
 $Version = "2.0"
 
@@ -60,14 +60,14 @@ function Type-Text {
 # ------------------------------------------------------------
 
 $logo = @'
- ██████╗██╗  ██╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ███████╗
-██╔════╝██║  ██║██╔══██╗██╔═══██╗████╗  ██║██╔════╝ ██╔════╝
-██║     ███████║██████╔╝██║   ██║██╔██╗ ██║██║  ███╗███████╗
-██║     ██╔══██║██╔══██╗██║   ██║██║╚██╗██║██║   ██║╚════██║
-╚██████╗██║  ██║██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝███████║
- ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝
-
-                 C H R O N O S T E C H
+ ██████╗██╗  ██╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ███████╗   ████████╗███████╗ ██████╗██╗  ██╗
+██╔════╝██║  ██║██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██╔════╝   ╚══██╔══╝██╔════╝██╔════╝██║  ██║
+██║     ███████║██████╔╝██║   ██║██╔██╗ ██║██║   ██║███████╗█████╗██║   █████╗  ██║     ███████║
+██║     ██╔══██║██╔══██╗██║   ██║██║╚██╗██║██║   ██║╚════██║╚════╝██║   ██╔══╝  ██║     ██╔══██║
+╚██████╗██║  ██║██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝███████║      ██║   ███████╗╚██████╗██║  ██║
+ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝
+ 
+               C H R O N O S -- T E C H
                     TOOLKIT v2.0
 '@
 
@@ -93,7 +93,7 @@ function Pause-CT {
 Clear-Host
 
 Type-Text `
-    "Inicializando ChronosTech Toolkit..." `
+    "Inicializando Chronos-Tech Toolkit..." `
     "Cyan" `
     10
 
@@ -189,7 +189,7 @@ function Show-MainMenu {
     Write-Host "Ferramentas do Windows"
 
     Write-Host " [7] " -NoNewline -ForegroundColor Yellow
-    Write-Host "Em desenvolvimento"
+    Write-Host "MaS Active"
 
     Write-Host " [0] " -NoNewline -ForegroundColor Red
     Write-Host "Sair"
@@ -748,17 +748,29 @@ while ($true) {
 
         "7" {
 
-            Clear-Host
+    Clear-Host
 
-            Write-Host $logo -ForegroundColor Cyan
-            Write-Host ""
+    Write-Host $logo -ForegroundColor Cyan
+    Write-Host ""
 
-            Write-Host "Esta função está em desenvolvimento." `
-                -ForegroundColor Yellow
+    Write-Host "============================================================" `
+        -ForegroundColor DarkCyan
 
-            Pause-CT
-        }
+    Write-Host "                       MaS Active" `
+        -ForegroundColor Green
 
+    Write-Host "============================================================" `
+        -ForegroundColor DarkCyan
+
+    Write-Host ""
+
+    Write-Host "Abrindo o site oficial do MAS..." `
+        -ForegroundColor Yellow
+
+    Start-Process "https://get.activated.win"
+
+    Pause-CT
+}
         "0" {
 
             Clear-Host
@@ -767,7 +779,7 @@ while ($true) {
             Write-Host "============================================================" `
                 -ForegroundColor Cyan
 
-            Write-Host "       Obrigado por utilizar a ChronosTech Toolkit!" `
+            Write-Host "       Obrigado por utilizar o Chronos-Tech Toolkit!" `
                 -ForegroundColor Cyan
 
             Write-Host "============================================================" `
