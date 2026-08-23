@@ -27,7 +27,6 @@ if (-not $isAdmin) {
             -ForegroundColor Red
 
         Pause
-
         exit
     }
 
@@ -66,9 +65,9 @@ $Host.UI.RawUI.WindowTitle = "Chronos-Tech Toolkit"
 
 $Version = "2.2"
 
-# ------------------------------------------------------------
-# TEXTO ANIMADO
-# ------------------------------------------------------------
+# ============================================================
+# FUNÇÃO DE TEXTO ANIMADO
+# ============================================================
 
 function Type-Text {
 
@@ -90,9 +89,9 @@ function Type-Text {
     Write-Host
 }
 
-# ------------------------------------------------------------
+# ============================================================
 # LOGO
-# ------------------------------------------------------------
+# ============================================================
 
 $logo = @'
 ██████╗██╗  ██╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ███████╗   ████████╗███████╗ ██████╗██╗  ██╗
@@ -100,15 +99,15 @@ $logo = @'
 ██║     ███████║██████╔╝██║   ██║██╔██╗ ██║██║   ██║███████╗█████╗██║   █████╗  ██║     ███████║
 ██║     ██╔══██║██╔══██╗██║   ██║██║╚██╗██║██║   ██║╚════██║╚════╝██║   ██╔══╝  ██║     ██╔══██║
 ╚██████╗██║  ██║██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝███████║      ██║   ███████╗╚██████╗██║  ██║
- ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝
+ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝╚══════╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝
 
               C H R O N O S -- T E C H
                    TOOLKIT v2.2
 '@
 
-# ------------------------------------------------------------
+# ============================================================
 # PAUSA
-# ------------------------------------------------------------
+# ============================================================
 
 function Pause-CT {
 
@@ -130,9 +129,9 @@ function Pause-CT {
     }
 }
 
-# ------------------------------------------------------------
+# ============================================================
 # CABEÇALHO
-# ------------------------------------------------------------
+# ============================================================
 
 function Show-Header {
 
@@ -192,9 +191,9 @@ foreach ($msg in $mensagens) {
 
 Write-Host ""
 
-# ------------------------------------------------------------
+# ============================================================
 # BARRA DE PROGRESSO
-# ------------------------------------------------------------
+# ============================================================
 
 for ($i = 0; $i -le 100; $i++) {
 
@@ -878,7 +877,7 @@ function Ferramentas-Windows {
 }
 
 # ============================================================
-# MAS
+# MAS ACTIVE
 # ============================================================
 
 function MAS-Active {
@@ -900,13 +899,8 @@ function MAS-Active {
 
         Write-Host ""
 
-        Write-Host "Ferramenta externa para gerenciamento de ativação." `
-            -ForegroundColor Gray
-
-        Write-Host ""
-
-        Write-Host "[1] Abrir site oficial"
-        Write-Host "[2] Exibir comando oficial"
+        Write-Host "[1] Abrir repositório oficial"
+        Write-Host "[2] Abrir documentação do MAS"
         Write-Host "[3] Ver status da licença"
         Write-Host "[0] Voltar"
 
@@ -918,11 +912,6 @@ function MAS-Active {
 
             "1" {
 
-                Write-Host ""
-
-                Write-Host "Abrindo site oficial..." `
-                    -ForegroundColor Yellow
-
                 Start-Process `
                     "https://github.com/massgravel/Microsoft-Activation-Scripts"
 
@@ -933,7 +922,7 @@ function MAS-Active {
 
                 Show-Header
 
-                Write-Host "                  COMANDO DO MAS" `
+                Write-Host "                  DOCUMENTAÇÃO DO MAS" `
                     -ForegroundColor Yellow
 
                 Write-Host "============================================================" `
@@ -941,29 +930,13 @@ function MAS-Active {
 
                 Write-Host ""
 
-                Write-Host "Repositório oficial:" `
-                    -ForegroundColor Gray
-
-                Write-Host "https://github.com/massgravel/Microsoft-Activation-Scripts" `
+                Write-Host "Abrindo o repositório oficial..." `
                     -ForegroundColor Cyan
 
                 Write-Host ""
 
-                Write-Host "O MAS possui métodos oficiais documentados" `
-                    -ForegroundColor Gray
-
-                Write-Host "no próprio repositório do projeto." `
-                    -ForegroundColor Gray
-
-                Write-Host ""
-
-                Write-Host "ATENÇÃO:" `
-                    -ForegroundColor Red
-
-                Write-Host "Evite executar comandos remotos de fontes desconhecidas." `
-                    -ForegroundColor Yellow
-
-                Write-Host ""
+                Start-Process `
+                    "https://github.com/massgravel/Microsoft-Activation-Scripts"
 
                 Pause-CT
             }
@@ -988,6 +961,26 @@ function MAS-Active {
 
                 Pause-CT
             }
+
+            "0" {
+                return
+            }
+
+            default {
+
+                Write-Host ""
+
+                Write-Host "Opção inválida!" `
+                    -ForegroundColor Red
+
+                Start-Sleep -Seconds 1
+            }
+        }
+    }
+}
+            # ------------------------------------------------
+            # VOLTAR
+            # ------------------------------------------------
 
             "0" {
                 return
@@ -1105,7 +1098,7 @@ function Show-MainMenu {
 
     Write-Host " [7] " `
         -NoNewline `
-        -ForegroundColor Yellow
+        -ForegroundColor Green
 
     Write-Host "MaS Active"
 
