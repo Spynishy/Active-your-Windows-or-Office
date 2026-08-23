@@ -1,7 +1,7 @@
 # ============================================================
 #                  CHRONOS-TECH TOOLKIT
 #                  Windows Support Toolkit
-#                  Version 2.3
+#                  Version 2.2
 # ============================================================
 
 # ------------------------------------------------------------
@@ -37,7 +37,8 @@ if (-not $isAdmin) {
             -ArgumentList @(
                 "-NoProfile"
                 "-ExecutionPolicy Bypass"
-                "-File `"$PSCommandPath`""
+                "-File"
+                "`"$PSCommandPath`""
             )
 
     }
@@ -59,7 +60,7 @@ if (-not $isAdmin) {
 
 $ErrorActionPreference = "SilentlyContinue"
 
-$Version = "2.3"
+$Version = "2.2"
 
 Clear-Host
 
@@ -80,9 +81,9 @@ function Type-Text {
         [int]$Speed = 15
     )
 
-    foreach ($char in $Text.ToCharArray()) {
+    foreach ($c in $Text.ToCharArray()) {
 
-        Write-Host $char `
+        Write-Host $c `
             -NoNewline `
             -ForegroundColor $Color
 
@@ -105,7 +106,7 @@ $logo = @'
  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝
 
               C H R O N O S -- T E C H
-                   TOOLKIT v2.3
+                   TOOLKIT v2.2
 '@
 
 # ============================================================
@@ -150,7 +151,7 @@ function Show-Header {
 }
 
 # ============================================================
-# INICIALIZAÇÃO
+# TELA DE INICIALIZAÇÃO
 # ============================================================
 
 Clear-Host
@@ -184,7 +185,7 @@ foreach ($msg in $mensagens) {
             -NoNewline `
             -ForegroundColor Yellow
 
-        Start-Sleep -Milliseconds 40
+        Start-Sleep -Milliseconds 50
     }
 
     Write-Host `
@@ -203,11 +204,9 @@ for ($i = 0; $i -le 100; $i++) {
     $barSize = 50
 
     $filled = [math]::Floor($i / 2)
-
     $empty = $barSize - $filled
 
     $bars = "█" * $filled
-
     $spaces = " " * $empty
 
     Write-Host `
@@ -215,7 +214,7 @@ for ($i = 0; $i -le 100; $i++) {
         -NoNewline `
         -ForegroundColor Cyan
 
-    Start-Sleep -Milliseconds 8
+    Start-Sleep -Milliseconds 10
 }
 
 Write-Host ""
@@ -240,20 +239,28 @@ function Liberar-Espaco {
     Write-Host "[1/5] Limpando arquivos temporários..." `
         -ForegroundColor Yellow
 
-    Remove-Item `
-        "$env:TEMP\*" `
-        -Recurse `
-        -Force `
-        -ErrorAction SilentlyContinue
+    try {
 
-    Remove-Item `
-        "$env:WINDIR\Temp\*" `
-        -Recurse `
-        -Force `
-        -ErrorAction SilentlyContinue
+        Remove-Item `
+            "$env:TEMP\*" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
 
-    Write-Host "[OK] Arquivos temporários processados." `
-        -ForegroundColor Green
+        Remove-Item `
+            "$env:WINDIR\Temp\*" `
+            -Recurse `
+            -Force `
+            -ErrorAction SilentlyContinue
+
+        Write-Host "[OK] Arquivos temporários processados." `
+            -ForegroundColor Green
+    }
+    catch {
+
+        Write-Host "[!] Algumas pastas não puderam ser limpas." `
+            -ForegroundColor Yellow
+    }
 
     Write-Host ""
 
@@ -271,7 +278,7 @@ function Liberar-Espaco {
     }
     catch {
 
-        Write-Host "[!] Lixeira não pôde ser processada." `
+        Write-Host "[!] Não foi possível limpar a Lixeira." `
             -ForegroundColor Yellow
     }
 
@@ -285,7 +292,7 @@ function Liberar-Espaco {
         -Force `
         -ErrorAction SilentlyContinue
 
-    Write-Host "[OK] Cache de miniaturas processado." `
+    Write-Host "[OK] Cache processado." `
         -ForegroundColor Green
 
     Write-Host ""
@@ -308,7 +315,7 @@ function Liberar-Espaco {
         wuauserv `
         -ErrorAction SilentlyContinue
 
-    Write-Host "[OK] Windows Update processado." `
+    Write-Host "[OK] Cache do Windows Update processado." `
         -ForegroundColor Green
 
     Write-Host ""
@@ -510,6 +517,11 @@ function Diagnostico-Rede {
 
                 Write-Host ""
 
+                Write-Host "Testando conectividade com 8.8.8.8..." `
+                    -ForegroundColor Yellow
+
+                Write-Host ""
+
                 Test-Connection `
                     -ComputerName 8.8.8.8 `
                     -Count 4
@@ -638,6 +650,8 @@ function Informacoes-Sistema {
     Write-Host "Arquitetura: " -NoNewline
     Write-Host $os.OSArchitecture
 
+    Write-Host ""
+
     Pause-CT
 }
 
@@ -720,6 +734,8 @@ function Manutencao-Windows {
 
                 Start-Process `
                     cleanmgr.exe
+
+                Start-Sleep -Seconds 1
             }
 
             "0" {
@@ -776,18 +792,53 @@ function Ferramentas-Windows {
 
         switch ($opcao) {
 
-            "1" { Start-Process cmd.exe }
-            "2" { Start-Process powershell.exe }
-            "3" { Start-Process taskmgr.exe }
-            "4" { Start-Process regedit.exe }
-            "5" { Start-Process eventvwr.msc }
-            "6" { Start-Process devmgmt.msc }
-            "7" { Start-Process diskmgmt.msc }
-            "8" { Start-Process services.msc }
-            "9" { Start-Process msinfo32.exe }
-            "10" { Start-Process control.exe }
-            "11" { Start-Process compmgmt.msc }
-            "12" { Start-Process wf.msc }
+            "1" {
+                Start-Process cmd.exe
+            }
+
+            "2" {
+                Start-Process powershell.exe
+            }
+
+            "3" {
+                Start-Process taskmgr.exe
+            }
+
+            "4" {
+                Start-Process regedit.exe
+            }
+
+            "5" {
+                Start-Process eventvwr.msc
+            }
+
+            "6" {
+                Start-Process devmgmt.msc
+            }
+
+            "7" {
+                Start-Process diskmgmt.msc
+            }
+
+            "8" {
+                Start-Process services.msc
+            }
+
+            "9" {
+                Start-Process msinfo32.exe
+            }
+
+            "10" {
+                Start-Process control.exe
+            }
+
+            "11" {
+                Start-Process compmgmt.msc
+            }
+
+            "12" {
+                Start-Process wf.msc
+            }
 
             "0" {
                 return
@@ -806,7 +857,7 @@ function Ferramentas-Windows {
 }
 
 # ============================================================
-# MAS
+# MAS ACTIVE
 # ============================================================
 
 function MAS-Active {
@@ -828,8 +879,13 @@ function MAS-Active {
 
         Write-Host ""
 
+        Write-Host "Ferramenta externa para gerenciamento de ativação." `
+            -ForegroundColor Gray
+
+        Write-Host ""
+
         Write-Host "[1] Abrir repositório oficial"
-        Write-Host "[2] Abrir página oficial do MAS"
+        Write-Host "[2] Abrir site oficial"
         Write-Host "[3] Ver status da licença"
         Write-Host "[0] Voltar"
 
@@ -841,18 +897,28 @@ function MAS-Active {
 
             "1" {
 
+                Write-Host ""
+
+                Write-Host "Abrindo repositório oficial..." `
+                    -ForegroundColor Yellow
+
                 Start-Process `
                     "https://github.com/massgravel/Microsoft-Activation-Scripts"
 
-                Start-Sleep -Seconds 1
+                Start-Sleep -Seconds 2
             }
 
             "2" {
 
+                Write-Host ""
+
+                Write-Host "Abrindo site oficial..." `
+                    -ForegroundColor Yellow
+
                 Start-Process `
                     "https://massgrave.dev/"
 
-                Start-Sleep -Seconds 1
+                Start-Sleep -Seconds 2
             }
 
             "3" {
@@ -883,6 +949,7 @@ function MAS-Active {
             default {
 
                 Write-Host ""
+
                 Write-Host "Opção inválida!" `
                     -ForegroundColor Red
 
@@ -893,7 +960,7 @@ function MAS-Active {
 }
 
 # ============================================================
-# SOBRE
+# SOBRE O CHRONOS-TECH
 # ============================================================
 
 function Sobre-Chronos {
@@ -923,9 +990,11 @@ function Sobre-Chronos {
     Write-Host "Ferramentas desenvolvidas para auxiliar" `
         -ForegroundColor Gray
 
-    Write-Host "na manutenção, diagnóstico e suporte técnico"
+    Write-Host "na manutenção, diagnóstico e suporte técnico" `
+        -ForegroundColor Gray
 
-    Write-Host "de computadores Windows."
+    Write-Host "de computadores Windows." `
+        -ForegroundColor Gray
 
     Write-Host ""
 
@@ -953,31 +1022,58 @@ function Show-MainMenu {
 
     Write-Host ""
 
-    Write-Host " [1] " -NoNewline -ForegroundColor Green
+    Write-Host " [1] " `
+        -NoNewline `
+        -ForegroundColor Green
+
     Write-Host "Liberar Espaço"
 
-    Write-Host " [2] " -NoNewline -ForegroundColor Green
+    Write-Host " [2] " `
+        -NoNewline `
+        -ForegroundColor Green
+
     Write-Host "Windows / Licenciamento"
 
-    Write-Host " [3] " -NoNewline -ForegroundColor Green
+    Write-Host " [3] " `
+        -NoNewline `
+        -ForegroundColor Green
+
     Write-Host "Diagnóstico de Rede"
 
-    Write-Host " [4] " -NoNewline -ForegroundColor Green
+    Write-Host " [4] " `
+        -NoNewline `
+        -ForegroundColor Green
+
     Write-Host "Informações do Sistema"
 
-    Write-Host " [5] " -NoNewline -ForegroundColor Green
+    Write-Host " [5] " `
+        -NoNewline `
+        -ForegroundColor Green
+
     Write-Host "Manutenção do Windows"
 
-    Write-Host " [6] " -NoNewline -ForegroundColor Green
+    Write-Host " [6] " `
+        -NoNewline `
+        -ForegroundColor Green
+
     Write-Host "Ferramentas do Windows"
 
-    Write-Host " [7] " -NoNewline -ForegroundColor Yellow
+    Write-Host " [7] " `
+        -NoNewline `
+        -ForegroundColor Yellow
+
     Write-Host "MaS Active"
 
-    Write-Host " [8] " -NoNewline -ForegroundColor Cyan
+    Write-Host " [8] " `
+        -NoNewline `
+        -ForegroundColor Cyan
+
     Write-Host "Sobre o Chronos-Tech"
 
-    Write-Host " [0] " -NoNewline -ForegroundColor Red
+    Write-Host " [0] " `
+        -NoNewline `
+        -ForegroundColor Red
+
     Write-Host "Sair"
 
     Write-Host ""
@@ -1037,10 +1133,12 @@ while ($true) {
             Clear-Host
 
             Write-Host ""
+
             Write-Host "============================================================" `
                 -ForegroundColor Cyan
 
-            Write-Host "       Obrigado por utilizar o Chronos-Tech Toolkit!" `
+            Write-Host `
+                "       Obrigado por utilizar o Chronos-Tech Toolkit!" `
                 -ForegroundColor Cyan
 
             Write-Host ""
