@@ -1,0 +1,451 @@
+# ============================================================
+#                    CHRONOSTECH TOOLKIT
+#             Windows Support & HelpDesk Tools
+# ============================================================
+
+$Host.UI.RawUI.WindowTitle = "ChronosTech Toolkit"
+
+function Pause-Menu {
+    Write-Host ""
+    Write-Host "Pressione qualquer tecla para continuar..." -ForegroundColor DarkGray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
+
+function Header {
+    Clear-Host
+
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "                 C H R O N O S T E C H" -ForegroundColor Cyan
+    Write-Host "              WINDOWS SUPPORT TOOLKIT" -ForegroundColor DarkCyan
+    Write-Host ""
+    Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
+}
+
+# ============================================================
+#                    INFORMACOES DO SISTEMA
+# ============================================================
+
+function System-Info {
+
+    Header
+
+    Write-Host "[ INFORMAÇÕES DO SISTEMA ]" -ForegroundColor Green
+    Write-Host ""
+
+    $computer = Get-CimInstance Win32_ComputerSystem
+    $os = Get-CimInstance Win32_OperatingSystem
+    $cpu = Get-CimInstance Win32_Processor | Select-Object -First 1
+
+    Write-Host "Computador : $($computer.Name)"
+    Write-Host "Fabricante : $($computer.Manufacturer)"
+    Write-Host "Modelo     : $($computer.Model)"
+    Write-Host "Processador : $($cpu.Name)"
+    Write-Host "RAM        : $([math]::Round($computer.TotalPhysicalMemory / 1GB,2)) GB"
+    Write-Host "Windows    : $($os.Caption)"
+    Write-Host "Versão     : $($os.Version)"
+    Write-Host "Arquitetura: $($os.OSArchitecture)"
+
+    Pause-Menu
+}
+
+# ============================================================
+#                         REDE
+# ============================================================
+
+function Network-Menu {
+
+    do {
+
+        Header
+
+        Write-Host "[ REDE ]" -ForegroundColor Green
+        Write-Host ""
+
+        Write-Host "[1] Informações de IP"
+        Write-Host "[2] Testar Internet"
+        Write-Host "[3] Testar DNS"
+        Write-Host "[4] Limpar cache DNS"
+        Write-Host "[5] Ver adaptadores"
+        Write-Host "[0] Voltar"
+        Write-Host ""
+
+        $option = Read-Host "ChronosTech\Rede"
+
+        switch ($option) {
+
+            "1" {
+                Clear-Host
+                Write-Host "=== CONFIGURAÇÃO DE IP ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                ipconfig /all
+
+                Pause-Menu
+            }
+
+            "2" {
+                Clear-Host
+                Write-Host "=== TESTE DE INTERNET ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                Test-Connection 8.8.8.8 -Count 4
+
+                Pause-Menu
+            }
+
+            "3" {
+                Clear-Host
+                Write-Host "=== TESTE DE DNS ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                Resolve-DnsName google.com
+
+                Pause-Menu
+            }
+
+            "4" {
+                Clear-Host
+                Write-Host "=== LIMPEZA DE DNS ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                ipconfig /flushdns
+
+                Pause-Menu
+            }
+
+            "5" {
+                Clear-Host
+                Write-Host "=== ADAPTADORES DE REDE ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                Get-NetAdapter |
+                    Format-Table Name, InterfaceDescription, Status, LinkSpeed -AutoSize
+
+                Pause-Menu
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+                Write-Host "Opção inválida." -ForegroundColor Red
+                Start-Sleep -Seconds 1
+            }
+        }
+
+    } while ($true)
+}
+
+# ============================================================
+#                       MANUTENÇÃO
+# ============================================================
+
+function Maintenance-Menu {
+
+    do {
+
+        Header
+
+        Write-Host "[ MANUTENÇÃO ]" -ForegroundColor Green
+        Write-Host ""
+
+        Write-Host "[1] Limpar arquivos temporários"
+        Write-Host "[2] Verificar arquivos do Windows"
+        Write-Host "[3] Verificar imagem do Windows"
+        Write-Host "[4] Abrir Limpeza de Disco"
+        Write-Host "[5] Ver programas de inicialização"
+        Write-Host "[0] Voltar"
+        Write-Host ""
+
+        $option = Read-Host "ChronosTech\Manutencao"
+
+        switch ($option) {
+
+            "1" {
+
+                Clear-Host
+
+                Write-Host "=== LIMPEZA DE TEMPORÁRIOS ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                Remove-Item "$env:TEMP\*" `
+                    -Recurse `
+                    -Force `
+                    -ErrorAction SilentlyContinue
+
+                Write-Host ""
+                Write-Host "Limpeza concluída." -ForegroundColor Green
+
+                Pause-Menu
+            }
+
+            "2" {
+
+                Clear-Host
+
+                Write-Host "=== SYSTEM FILE CHECKER ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                sfc /scannow
+
+                Pause-Menu
+            }
+
+            "3" {
+
+                Clear-Host
+
+                Write-Host "=== DISM ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                DISM /Online /Cleanup-Image /RestoreHealth
+
+                Pause-Menu
+            }
+
+            "4" {
+
+                Start-Process cleanmgr
+            }
+
+            "5" {
+
+                Clear-Host
+
+                Write-Host "=== INICIALIZAÇÃO ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                Get-CimInstance Win32_StartupCommand |
+                    Select-Object Name, Command, Location |
+                    Format-Table -AutoSize
+
+                Pause-Menu
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+                Write-Host "Opção inválida." -ForegroundColor Red
+                Start-Sleep -Seconds 1
+            }
+        }
+
+    } while ($true)
+}
+
+# ============================================================
+#                         WINDOWS
+# ============================================================
+
+function Windows-Menu {
+
+    do {
+
+        Header
+
+        Write-Host "[ WINDOWS ]" -ForegroundColor Green
+        Write-Host ""
+
+        Write-Host "[1] Informações da licença"
+        Write-Host "[2] Versão do Windows"
+        Write-Host "[3] Abrir Configurações"
+        Write-Host "[4] Abrir Painel de Controle"
+        Write-Host "[5] Gerenciador de Dispositivos"
+        Write-Host "[6] Gerenciamento de Disco"
+        Write-Host "[0] Voltar"
+        Write-Host ""
+
+        $option = Read-Host "ChronosTech\Windows"
+
+        switch ($option) {
+
+            "1" {
+
+                Clear-Host
+
+                Write-Host "=== LICENÇA DO WINDOWS ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                cscript.exe "$env:SystemRoot\System32\slmgr.vbs" /dli
+
+                Pause-Menu
+            }
+
+            "2" {
+
+                Clear-Host
+
+                Write-Host "=== VERSÃO DO WINDOWS ===" -ForegroundColor Cyan
+                Write-Host ""
+
+                Get-ComputerInfo |
+                    Select-Object WindowsProductName,
+                    WindowsVersion,
+                    OsBuildNumber,
+                    OsArchitecture
+
+                Pause-Menu
+            }
+
+            "3" {
+                Start-Process "ms-settings:"
+            }
+
+            "4" {
+                Start-Process control
+            }
+
+            "5" {
+                Start-Process devmgmt.msc
+            }
+
+            "6" {
+                Start-Process diskmgmt.msc
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+                Write-Host "Opção inválida." -ForegroundColor Red
+                Start-Sleep -Seconds 1
+            }
+        }
+
+    } while ($true)
+}
+
+# ============================================================
+#                     FERRAMENTAS
+# ============================================================
+
+function Tools-Menu {
+
+    do {
+
+        Header
+
+        Write-Host "[ FERRAMENTAS ]" -ForegroundColor Green
+        Write-Host ""
+
+        Write-Host "[1] CMD"
+        Write-Host "[2] PowerShell"
+        Write-Host "[3] Gerenciador de Tarefas"
+        Write-Host "[4] Editor do Registro"
+        Write-Host "[5] Visualizador de Eventos"
+        Write-Host "[6] Informações do Sistema"
+        Write-Host "[0] Voltar"
+        Write-Host ""
+
+        $option = Read-Host "ChronosTech\Ferramentas"
+
+        switch ($option) {
+
+            "1" {
+                Start-Process cmd
+            }
+
+            "2" {
+                Start-Process powershell
+            }
+
+            "3" {
+                Start-Process taskmgr
+            }
+
+            "4" {
+                Start-Process regedit
+            }
+
+            "5" {
+                Start-Process eventvwr
+            }
+
+            "6" {
+                Start-Process msinfo32
+            }
+
+            "0" {
+                return
+            }
+
+            default {
+                Write-Host "Opção inválida." -ForegroundColor Red
+                Start-Sleep -Seconds 1
+            }
+        }
+
+    } while ($true)
+}
+
+# ============================================================
+#                       MENU PRINCIPAL
+# ============================================================
+
+do {
+
+    Header
+
+    Write-Host "  [1] Windows" -ForegroundColor White
+    Write-Host "  [2] Rede" -ForegroundColor White
+    Write-Host "  [3] Manutenção" -ForegroundColor White
+    Write-Host "  [4] Informações do Sistema" -ForegroundColor White
+    Write-Host "  [5] Ferramentas" -ForegroundColor White
+    Write-Host "  [0] Sair" -ForegroundColor Red
+
+    Write-Host ""
+    Write-Host "------------------------------------------------------------"
+    Write-Host ""
+
+    $option = Read-Host "ChronosTech"
+
+    switch ($option) {
+
+        "1" {
+            Windows-Menu
+        }
+
+        "2" {
+            Network-Menu
+        }
+
+        "3" {
+            Maintenance-Menu
+        }
+
+        "4" {
+            System-Info
+        }
+
+        "5" {
+            Tools-Menu
+        }
+
+        "0" {
+
+            Clear-Host
+
+            Write-Host ""
+            Write-Host "Obrigado por utilizar a ChronosTech Toolkit." -ForegroundColor Cyan
+            Write-Host ""
+
+            exit
+        }
+
+        default {
+
+            Write-Host ""
+            Write-Host "Opção inválida!" -ForegroundColor Red
+
+            Start-Sleep -Seconds 1
+        }
+    }
+
+} while ($true)
