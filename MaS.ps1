@@ -360,9 +360,10 @@ function Windows-Licenciamento {
 
         Write-Host ""
 
-        Write-Host "[1] Informações da licença"
-        Write-Host "[2] Versão do Windows"
-        Write-Host "[3] Ver chave OEM instalada"
+        Write-Host "[1] MaS Active"
+        Write-Host "[2] Informações da licença"
+        Write-Host "[3] Versão do Windows"
+        Write-Host "[4] Ver chave OEM instalada"
         Write-Host "[0] Voltar"
 
         Write-Host ""
@@ -370,8 +371,28 @@ function Windows-Licenciamento {
         $opcao = Read-Host "ChronosTech\Windows"
 
         switch ($opcao) {
+        "1" {
 
-            "1" {
+    Show-Header
+
+    Write-Host "=== MAS ACTIVE ===" `
+        -ForegroundColor Yellow
+
+    Write-Host ""
+
+    Write-Host "Iniciando Microsoft Activation Scripts..." `
+        -ForegroundColor Cyan
+
+    Write-Host ""
+
+    Start-Process powershell.exe `
+        -Verb RunAs `
+        -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', 'irm https://get.activated.win | iex'
+
+    Start-Sleep -Seconds 2
+        }
+
+            "2" {
 
                 Show-Header
 
@@ -387,7 +408,7 @@ function Windows-Licenciamento {
                 Pause-CT
             }
 
-            "2" {
+            "3" {
 
                 Show-Header
 
@@ -415,7 +436,7 @@ function Windows-Licenciamento {
                 Pause-CT
             }
 
-            "3" {
+            "4" {
 
                 Show-Header
 
@@ -1060,7 +1081,7 @@ function Show-MainMenu {
 
     Write-Host " [7] " `
         -NoNewline `
-        -ForegroundColor Yellow
+        -ForegroundColor Green
 
     Write-Host "MaS Active"
 
