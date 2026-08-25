@@ -158,7 +158,7 @@ Clear-Host
 
 Type-Text `
     "Inicializando Chronos-Tech Toolkit..." `
-    "Green" `
+    "Purple" `
     10
 
 Start-Sleep -Milliseconds 300
@@ -190,7 +190,7 @@ foreach ($msg in $mensagens) {
 
     Write-Host `
         "`r[OK] $msg concluído.      " `
-        -ForegroundColor Green
+        -ForegroundColor Cyan
 }
 
 Write-Host ""
