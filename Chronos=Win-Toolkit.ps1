@@ -118,7 +118,7 @@ function Pause-CT {
     Write-Host ""
 
     Write-Host "Pressione qualquer tecla para continuar..." `
-        -ForegroundColor DarkCyan
+        -ForegroundColor Darkcyan
 
     try {
 
