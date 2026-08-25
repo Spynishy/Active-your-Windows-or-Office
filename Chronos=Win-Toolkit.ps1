@@ -142,12 +142,12 @@ function Show-Header {
     Clear-Host
 
     Write-Host $logo `
-        -ForegroundColor Green
+        -ForegroundColor Pink
 
     Write-Host ""
 
     Write-Host "========================================================================" `
-        -ForegroundColor Darkgreen
+        -ForegroundColor Darkpink
 }
 
 # ============================================================
@@ -158,7 +158,7 @@ Clear-Host
 
 Type-Text `
     "Inicializando Chronos-Tech Toolkit..." `
-    "Purple" `
+    "Cyan" `
     10
 
 Start-Sleep -Milliseconds 300
@@ -212,7 +212,7 @@ for ($i = 0; $i -le 100; $i++) {
     Write-Host `
         "`r[$bars$spaces] $i%" `
         -NoNewline `
-        -ForegroundColor Purple
+        -ForegroundColor Cyan
 
     Start-Sleep -Milliseconds 10
 }
