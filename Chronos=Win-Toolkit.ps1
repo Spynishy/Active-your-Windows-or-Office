@@ -77,7 +77,7 @@ function Type-Text {
 
     param(
         [string]$Text,
-        [string]$Color = "Cyan",
+        [string]$Color = "Purple",
         [int]$Speed = 15
     )
 
@@ -106,7 +106,7 @@ $logo = @'
  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝      ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝
 
               C H R O N O S -- T E C H
-                   TOOLKIT v1.0
+                |Windows-TOOLKIT v1.0| 
 '@
 
 # ============================================================
@@ -146,7 +146,7 @@ function Show-Header {
 
     Write-Host ""
 
-    Write-Host "============================================================" `
+    Write-Host "========================================================================" `
         -ForegroundColor DarkCyan
 }
 
@@ -158,7 +158,7 @@ Clear-Host
 
 Type-Text `
     "Inicializando Chronos-Tech Toolkit..." `
-    "Cyan" `
+    "Green" `
     10
 
 Start-Sleep -Milliseconds 300
@@ -878,7 +878,7 @@ function Ferramentas-Windows {
 }
 
 # ============================================================
-# MAS ACTIVE
+# MAS ACTIVE Credites
 # ============================================================
 
 function MAS-Active {
