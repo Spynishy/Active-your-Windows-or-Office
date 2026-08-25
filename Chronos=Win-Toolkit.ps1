@@ -142,12 +142,12 @@ function Show-Header {
     Clear-Host
 
     Write-Host $logo `
-        -ForegroundColor Blue
+        -ForegroundColor Green
 
     Write-Host ""
 
     Write-Host "========================================================================" `
-        -ForegroundColor Darkblue
+        -ForegroundColor Darkgreen
 }
 
 # ============================================================
@@ -212,7 +212,7 @@ for ($i = 0; $i -le 100; $i++) {
     Write-Host `
         "`r[$bars$spaces] $i%" `
         -NoNewline `
-        -ForegroundColor Cyan
+        -ForegroundColor Purple
 
     Start-Sleep -Milliseconds 10
 }
