@@ -77,7 +77,7 @@ function Type-Text {
 
     param(
         [string]$Text,
-        [string]$Color = "Purple",
+        [string]$Color = "purple",
         [int]$Speed = 15
     )
 
@@ -212,7 +212,7 @@ for ($i = 0; $i -le 100; $i++) {
     Write-Host `
         "`r[$bars$spaces] $i%" `
         -NoNewline `
-        -ForegroundColor Green
+        -ForegroundColor Cyan
 
     Start-Sleep -Milliseconds 10
 }
