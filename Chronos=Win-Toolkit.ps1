@@ -118,7 +118,7 @@ function Pause-CT {
     Write-Host ""
 
     Write-Host "Pressione qualquer tecla para continuar..." `
-        -ForegroundColor Darkcyan
+        -ForegroundColor Darkgreen
 
     try {
 
@@ -231,7 +231,7 @@ function Liberar-Espaco {
     Write-Host "                 LIBERAR ESPAÇO" `
         -ForegroundColor Green
 
-    Write-Host "============================================================" `
+    Write-Host "========================================================================" `
         -ForegroundColor DarkCyan
 
     Write-Host ""
