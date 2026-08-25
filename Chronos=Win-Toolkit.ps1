@@ -142,12 +142,12 @@ function Show-Header {
     Clear-Host
 
     Write-Host $logo `
-        -ForegroundColor Cyan
+        -ForegroundColor Blue
 
     Write-Host ""
 
     Write-Host "========================================================================" `
-        -ForegroundColor Darkcyan
+        -ForegroundColor Darkblue
 }
 
 # ============================================================
@@ -190,7 +190,7 @@ foreach ($msg in $mensagens) {
 
     Write-Host `
         "`r[OK] $msg concluído.      " `
-        -ForegroundColor Cyan
+        -ForegroundColor Green
 }
 
 Write-Host ""
