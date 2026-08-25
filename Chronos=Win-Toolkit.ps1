@@ -77,7 +77,7 @@ function Type-Text {
 
     param(
         [string]$Text,
-        [string]$Color = "Cyan",
+        [string]$Color = "Green",
         [int]$Speed = 15
     )
 
@@ -147,7 +147,7 @@ function Show-Header {
     Write-Host ""
 
     Write-Host "========================================================================" `
-        -ForegroundColor Darkgray
+        -ForegroundColor Darkcyan
 }
 
 # ============================================================
