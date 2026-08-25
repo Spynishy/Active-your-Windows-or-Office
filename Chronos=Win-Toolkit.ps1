@@ -77,7 +77,7 @@ function Type-Text {
 
     param(
         [string]$Text,
-        [string]$Color = "Purple",
+        [string]$Color = "purple",
         [int]$Speed = 15
     )
 
@@ -118,7 +118,7 @@ function Pause-CT {
     Write-Host ""
 
     Write-Host "Pressione qualquer tecla para continuar..." `
-        -ForegroundColor DarkPurple
+        -ForegroundColor Darkpurple
 
     try {
 
@@ -142,7 +142,7 @@ function Show-Header {
     Clear-Host
 
     Write-Host $logo `
-        -ForegroundColor green
+        -ForegroundColor Green
 
     Write-Host ""
 
