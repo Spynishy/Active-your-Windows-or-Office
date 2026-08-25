@@ -142,12 +142,12 @@ function Show-Header {
     Clear-Host
 
     Write-Host $logo `
-        -ForegroundColor Cyan
+        -ForegroundColor Purple
 
     Write-Host ""
 
     Write-Host "========================================================================" `
-        -ForegroundColor DarkCyan
+        -ForegroundColor DarkPurple
 }
 
 # ============================================================
