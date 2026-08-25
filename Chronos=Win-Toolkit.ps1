@@ -190,7 +190,7 @@ foreach ($msg in $mensagens) {
 
     Write-Host `
         "`r[OK] $msg concluído.      " `
-        -ForegroundColor Green
+        -ForegroundColor Cyan
 }
 
 Write-Host ""
